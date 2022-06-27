@@ -1,5 +1,4 @@
 
-
 provider "aws" {
   shared_credentials_file = "/Users/ubuntu/.aws/credentials"
   profile                 = "default"
