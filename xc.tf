@@ -17,15 +17,18 @@ resource "volterra_origin_pool" "nginx-pool" {
   no_tls = true
 }
 
-# resource "volterra_http_loadbalancer" "nginx_http_lb" {
-#   name      = "nginx-http_lb"
-#   namespace = var.XC_NAMESPACE
-#   domains   = ["j-chambers-nginx.amer-ent.f5demos.com"]
-#   default_route_pools {
-#     pool {
-#       name      = "nginx-pool"
-#       namespace = var.XC_NAMESPACE
-#       tenant    = var.XC_TENANT
-#     }
-#   }
-# }
+resource "volterra_http_loadbalancer" "nginx_http_lb" {
+  name                            = "nginx-http-lb"
+  namespace                       = var.XC_NAMESPACE
+  domains                         = ["j-chambers-nginx.amer-ent.f5demos.com"]
+  http {
+    port = "80"
+  }
+  default_route_pools {
+    pool {
+      name      = "nginx-pool"
+      namespace = var.XC_NAMESPACE
+      tenant    = var.XC_TENANT
+    }
+  }
+}
