@@ -55,8 +55,8 @@ resource "aws_security_group" "ssh-allowed" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
-    from_port   = 80
-    to_port     = 80
+    from_port   = 8080
+    to_port     = 8083
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -64,11 +64,11 @@ resource "aws_security_group" "ssh-allowed" {
 
 resource "aws_key_pair" "aws-key" {
   key_name   = "aws-key"
-  public_key = file(var.PUBLIC_KEY_PATH)
+  public_key = file(var.public_key_path)
 }
 
 resource "aws_instance" "nginx_server" {
-  ami           = "ami-08d70e59c07c61a3a"
+  ami           = "ami-0c21533018816e490"
   instance_type = "t2.micro"
   tags = {
     Name = "nginx_server"
@@ -77,19 +77,19 @@ resource "aws_instance" "nginx_server" {
   vpc_security_group_ids = ["${aws_security_group.ssh-allowed.id}"]
   key_name               = aws_key_pair.aws-key.id
   provisioner "file" {
-    source      = "nginx.sh"
-    destination = "/tmp/nginx.sh"
+    source      = "app.sh"
+    destination = "/tmp/app.sh"
   }
   provisioner "remote-exec" {
     inline = [
-      "chmod +x /tmp/nginx.sh",
-      "sudo /tmp/nginx.sh"
+      "chmod +x /tmp/app.sh",
+      "sudo /tmp/app.sh"
     ]
   }
   connection {
     type        = "ssh"
     host        = self.public_ip
     user        = "ubuntu"
-    private_key = file("${var.PRIVATE_KEY_PATH}")
+    private_key = file("${var.private_key_path}")
   }
 }

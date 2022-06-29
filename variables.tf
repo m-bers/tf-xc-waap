@@ -1,13 +1,13 @@
-variable "PRIVATE_KEY_PATH" {
+variable "private_key_path" {
   default = "/home/ubuntu/.ssh/id_rsa"
 }
-variable "PUBLIC_KEY_PATH" {
+variable "public_key_path" {
   default = "/home/ubuntu/.ssh/id_rsa.pub"
 }
-variable "EC2_USER" {
+variable "ec2_user" {
   default = "ubuntu"
 }
 
-variable "XC_NAMESPACE" {}
+variable "xc_namespace" {}
 
-variable "XC_TENANT" {}
+variable "xc_tenant" {}
