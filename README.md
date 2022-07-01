@@ -9,8 +9,8 @@ The purpose of this project is to, in a single terraform run, apply VPC/EC2 infr
 Clone this repo: 
 
 ```shell
-git clone https://github.com/m-bers/tf-xc-waap.git
-cd tf-xc-waap
+$ git clone https://github.com/m-bers/tf-xc-waap.git
+$ cd tf-xc-waap
 ```
 
 ## Terraform
@@ -28,19 +28,20 @@ ec2_user             = "ubuntu"
 aws_credentials_path = "/Users/ubuntu/.aws/credentials"
 
 # F5 Distributed Cloud namespace and tenant:
-    # Documentation -  https://docs.cloud.f5.com/docs/ves-concepts/core-concepts
-xc_namespace         = "some-namespace"
-xc_tenant            = "some-tenant-djishwip"
-xc_api_url           = "https://some-tenant.console.ves.volterra.io/api"  
+# Documentation -  https://docs.cloud.f5.com/docs/ves-concepts/core-concepts
+xc_namespace = "some-namespace"
+xc_tenant    = "some-tenant-djishwip"
+xc_api_url   = "https://some-tenant.console.ves.volterra.io/api"
 
 # F5 Distributed Cloud credentials:
-    # Documentation - https://docs.cloud.f5.com/docs/how-to/user-mgmt/credentials#generate-api-certificate
-xc_p12_path          = "/some/path/file.p12"
-xc_password          = "password"
+# Documentation - https://docs.cloud.f5.com/docs/how-to/user-mgmt/credentials#generate-api-certificate
+xc_p12_path = "/some/path/file.p12"
+xc_password = "password"
 
-# Application assets
-swaggerfile_location = "swagger/juice-shop.yml"
-
+# Application variables
+juice_shop_swagger   = "swagger/juice-shop.yml"
+juice_shop_fqdn      = "juice-shop.domain.com"
+arcadia_fqdn         = "arcadia.domain.com"
 ```
 ## AWS 
 This project also assumes the user has an AWS account. This spins up a pretty standard set of resources that should mostly be available via the free tier. To set up authentication, follow the steps under the [Shared Credentials File](https://registry.terraform.io/providers/hashicorp/aws/2.34.0/docs#shared-credentials-file) section of the AWS terraform provider documentation.
@@ -48,15 +49,19 @@ This project also assumes the user has an AWS account. This spins up a pretty st
 ## F5 Distributed Cloud
 You will need an account with an Organization plan to access the F5 Distributed Cloud services used in this lab. If you have an account, you can set up authentication by following [this guide](https://registry.terraform.io/providers/volterraedge/volterra/latest/docs). If you don't have an account, fill out [the form here](https://www.f5.com/products/get-f5) and someone from F5 will reach out to you.
 
-Once you are set up with an account, go ahead and [generate P12 API credentials](https://docs.cloud.f5.com/docs/how-to/user-mgmt/credentials#generate-api-certificate) for terraform and download the .p12 file to your machine. Then set variable `xc_p12_path` in the `terraform.tfvars` file you created to the absolute path of the certificate. You also need to set the environment variable `VES_P12_PASSWORD` to the password you set for the .p12 in the F5 Distributed Cloud console (Here's how to set environment variables for [Mac](https://support.apple.com/guide/terminal/use-environment-variables-apd382cc5fa-4f58-4449-b20a-41c53c006f8f/mac), [Windows](https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/set_1), and [Linux](https://www.digitalocean.com/community/tutorials/how-to-read-and-set-environmental-and-shell-variables-on-linux)).
+Once you are set up with an account, go ahead and [generate P12 API credentials](https://docs.cloud.f5.com/docs/how-to/user-mgmt/credentials#generate-api-certificate) for terraform and download the .p12 file to your machine. Then set variable `xc_p12_path` in the `terraform.tfvars` file you created to the absolute path of the certificate. 
+
+You also need to set the environment variable `VES_P12_PASSWORD` to the password you set for the .p12 in the F5 Distributed Cloud console (Here's how to set environment variables for [Mac](https://support.apple.com/guide/terminal/use-environment-variables-apd382cc5fa-4f58-4449-b20a-41c53c006f8f/mac), [Windows](https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/set_1), and [Linux](https://www.digitalocean.com/community/tutorials/how-to-read-and-set-environmental-and-shell-variables-on-linux)).
+
+You will also need to set up a delegated domain. I am using an existing domain in the F5 tenant, so domain delegation is outside the scope of this lab. However, there are instructions to set up your own delegated domain [here](https://docs.cloud.f5.com/docs/how-to/app-networking/domain-delegation).
 
 # Running the module
 
 After you have terraform installed and have AWS and F5 XC credentials set up, you can deploy in just two steps.
 
 ```shell
-terraform init
-terraform apply 
+$ terraform init
+$ terraform apply 
 ```
 
 If everything looks good, type "yes" at the prompt and check out your deployed resources in the F5 Distributed Cloud console at your tenant URL!

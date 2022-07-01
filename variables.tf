@@ -7,6 +7,6 @@ variable "xc_namespace" {}
 variable "xc_tenant" {}
 variable "xc_p12_path" {}
 variable "xc_api_url" {}
-variable "swaggerfile_location" {}
+variable "juice_shop_swagger" {}
 variable "juice_shop_fqdn" {}
 variable "arcadia_fqdn" {}

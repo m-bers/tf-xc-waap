@@ -104,7 +104,7 @@ resource "null_resource" "juice-shop-swagger" {
     xc_p12_path  = var.xc_p12_path
     xc_api_url   = var.xc_api_url
     xc_namespace = var.xc_namespace
-    swaggerfile  = filebase64(var.swaggerfile_location)
+    swaggerfile  = filebase64(var.juice_shop_swagger)
   }
   provisioner "local-exec" {
     working_dir = "${path.module}/swagger"
@@ -142,7 +142,7 @@ resource "volterra_api_definition" "juice-shop-api-definition" {
 resource "volterra_http_loadbalancer" "arcadia-http-lb" {
   name      = "${var.xc_namespace}-arcadia-http-lb"
   namespace = var.xc_namespace
-  domains   = ["${var.xc_namespace}-arcadia.amer-ent.f5demos.com"]
+  domains   = [var.arcadia_fqdn]
   https_auto_cert {
     http_redirect = true
   }
@@ -219,7 +219,7 @@ resource "volterra_http_loadbalancer" "arcadia-http-lb" {
 resource "volterra_http_loadbalancer" "juice-shop-http-lb" {
   name      = "${var.xc_namespace}-juice-shop-http-lb"
   namespace = var.xc_namespace
-  domains   = ["${var.xc_namespace}-juice-shop.amer-ent.f5demos.com"]
+  domains   = [var.juice_shop_fqdn]
   https_auto_cert {
     http_redirect = true
   }
