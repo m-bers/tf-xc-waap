@@ -34,3 +34,4 @@ override.tf.json
 terraform.rc
 
 f5-amer-ent.console.ves.volterra.io.api-creds.p12
+swagger/version
