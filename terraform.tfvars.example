@@ -1,0 +1,21 @@
+# tf-xc-waap/terraform.tfvars.example
+
+# AWS Resources
+private_key_path     = "/home/ubuntu/.ssh/id_rsa"
+public_key_path      = "/home/ubuntu/.ssh/id_rsa.pub"
+ec2_user             = "ubuntu"
+aws_credentials_path = "/Users/ubuntu/.aws/credentials"
+
+# F5 Distributed Cloud namespace and tenant:
+    # Documentation -  https://docs.cloud.f5.com/docs/ves-concepts/core-concepts
+xc_namespace         = "some-namespace"
+xc_tenant            = "some-tenant-djishwip"
+xc_api_url           = "https://some-tenant.console.ves.volterra.io/api"  
+
+# F5 Distributed Cloud credentials:
+    # Documentation - https://docs.cloud.f5.com/docs/how-to/user-mgmt/credentials#generate-api-certificate
+xc_p12_path          = "/some/path/file.p12"
+xc_password          = "password"
+
+# Application assets
+swaggerfile_location = "swagger/juice-shop.yml"
