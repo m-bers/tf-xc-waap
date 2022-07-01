@@ -142,7 +142,7 @@ resource "volterra_api_definition" "juice-shop-api-definition" {
 resource "volterra_http_loadbalancer" "arcadia-http-lb" {
   name      = "${var.xc_namespace}-arcadia-http-lb"
   namespace = var.xc_namespace
-  domains   = ["j-chambers-arcadia.amer-ent.f5demos.com"]
+  domains   = ["${var.xc_namespace}-arcadia.amer-ent.f5demos.com"]
   https_auto_cert {
     http_redirect = true
   }
@@ -219,7 +219,7 @@ resource "volterra_http_loadbalancer" "arcadia-http-lb" {
 resource "volterra_http_loadbalancer" "juice-shop-http-lb" {
   name      = "${var.xc_namespace}-juice-shop-http-lb"
   namespace = var.xc_namespace
-  domains   = ["j-chambers-juice-shop.amer-ent.f5demos.com"]
+  domains   = ["${var.xc_namespace}-juice-shop.amer-ent.f5demos.com"]
   https_auto_cert {
     http_redirect = true
   }

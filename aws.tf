@@ -1,6 +1,6 @@
 
 provider "aws" {
-  shared_credentials_file = "/Users/ubuntu/.aws/credentials"
+  shared_credentials_file = var.aws_credentials_path
   profile                 = "default"
   region                  = "us-west-2"
 }

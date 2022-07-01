@@ -1,3 +1,4 @@
+variable "aws_credentials_path" {}
 variable "private_key_path" {}
 variable "public_key_path" {}
 variable "ec2_user" {}
