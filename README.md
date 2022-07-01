@@ -1,4 +1,4 @@
-# F5 Distributed Cloud Terraform Personal Lab
+# F5 Distributed Cloud Terraform WAAP Lab
 
 Welcome to my terraform lab! 
 
