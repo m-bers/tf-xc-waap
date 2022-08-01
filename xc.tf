@@ -3,6 +3,58 @@ provider "volterra" {
   url          = var.xc_api_url
 }
 
+resource "volterra_aws_vpc_site" "main_vpc" {
+  name       = "${var.xc_namespace}-aws-vpc-site"
+  namespace  = "system"
+  aws_region = var.aws_region
+
+  vpc {
+    vpc_id = aws_vpc.main-vpc.id
+  }
+  // One of the arguments from this list "default_blocked_services blocked_services" must be set
+  default_blocked_services = true
+
+  // One of the arguments from this list "aws_cred" must be set
+
+  aws_cred {
+    name      = "${var.xc_namespace}-aws-creds"
+    namespace = "system"
+    tenant    = "${var.xc_tenant}"
+  }
+  instance_type = "a1.xlarge"
+  // One of the arguments from this list "logs_streaming_disabled log_receiver" must be set
+  logs_streaming_disabled = true
+
+  // One of the arguments from this list "ingress_egress_gw voltstack_cluster ingress_gw" must be set
+
+  ingress_gw {
+    allowed_vip_port {
+      // One of the arguments from this list "use_http_port use_https_port use_http_https_port custom_ports" must be set
+      use_http_https_port = true
+    }
+
+    aws_certified_hw = "aws-byol-voltmesh"
+
+    az_nodes {
+      aws_az_name = "us-west-2a"
+      disk_size   = "80"
+
+      local_subnet {
+        // One of the arguments from this list "subnet_param existing_subnet_id" must be set
+
+        existing_subnet_id = aws_subnet.prod-subnet-public-1.id
+      }
+    }
+
+    local_control_plane {
+      // One of the arguments from this list "no_local_control_plane default_local_control_plane" must be set
+      no_local_control_plane = true
+    }
+  }
+  # // One of the arguments from this list "total_nodes no_worker_nodes nodes_per_az" must be set
+  # nodes_per_az = 1
+}
+
 resource "volterra_origin_pool" "mainapp-pool" {
   name                   = "${var.xc_namespace}-mainapp-pool"
   namespace              = var.xc_namespace
@@ -109,7 +161,7 @@ resource "null_resource" "juice-shop-swagger" {
   provisioner "local-exec" {
     working_dir = "${path.module}/swagger"
     command     = <<EOT
-      curl -sk --cert-type P12 \
+      result=$(curl -sk --cert-type P12 \
         --cert ${null_resource.juice-shop-swagger.triggers.xc_p12_path}:${null_resource.juice-shop-swagger.triggers.xc_password} \
         -X PUT "${null_resource.juice-shop-swagger.triggers.xc_api_url}/object_store/namespaces/${null_resource.juice-shop-swagger.triggers.xc_namespace}/stored_objects/swagger/${null_resource.juice-shop-swagger.triggers.swagger_name}" \
         -H "Content-Type: application/json" \
@@ -119,15 +171,26 @@ resource "null_resource" "juice-shop-swagger" {
           "name": "${null_resource.juice-shop-swagger.triggers.swagger_name}",
           "namespace": "${null_resource.juice-shop-swagger.triggers.xc_namespace}",
           "object_type": "swagger"
-        }' | jq '.metadata' | jq -r '.version' > version
+        }')
+      echo $result | jq
+      if [ $(echo $result | jq -r '.status') != "STORED_OBJECT_STATUS_CREATED" ]; then
+        exit 1
+      fi
+      echo $result | jq '.metadata' | jq -r '.version' > version
       EOT
   }
   provisioner "local-exec" {
     when    = destroy
     command = <<EOT
-      curl -sk --cert-type P12 \
-        --cert ${self.triggers.xc_p12_path}:${self.triggers.xc_password} \
-        -X DELETE "${self.triggers.xc_api_url}/object_store/namespaces/${self.triggers.xc_namespace}/stored_objects/swagger/${self.triggers.swagger_name}?force_delete=true"
+      result=$(
+        curl -sk --cert-type P12 \
+          --cert ${self.triggers.xc_p12_path}:${self.triggers.xc_password} \
+          -X DELETE "${self.triggers.xc_api_url}/object_store/namespaces/${self.triggers.xc_namespace}/stored_objects/swagger/${self.triggers.swagger_name}?force_delete=true" \
+      )
+      echo $result | jq
+      if [ $(echo $result | jq -r 'keys[0]') != "deleted_objects" ]; then
+        exit 1
+      fi
       EOT
   }
 }

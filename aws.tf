@@ -120,3 +120,30 @@ resource "aws_instance" "juice-shop-server" {
     private_key = file("${var.private_key_path}")
   }
 }
+
+resource "aws_instance" "petstore-server" {
+  ami           = "ami-0c21533018816e490"
+  instance_type = "t2.micro"
+  tags = {
+    Name = "petstore-server"
+  }
+  subnet_id              = aws_subnet.prod-subnet-public-1.id
+  vpc_security_group_ids = ["${aws_security_group.ssh-allowed.id}"]
+  key_name               = aws_key_pair.aws-key.id
+  provisioner "file" {
+    source      = "scripts/petstore.sh"
+    destination = "/tmp/juice-shop.sh"
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "chmod +x /tmp/juice-shop.sh",
+      "sudo /tmp/juice-shop.sh"
+    ]
+  }
+  connection {
+    type        = "ssh"
+    host        = self.public_ip
+    user        = "ubuntu"
+    private_key = file("${var.private_key_path}")
+  }
+}

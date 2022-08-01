@@ -1,3 +1,4 @@
+variable "aws_region" {}
 variable "aws_credentials_path" {}
 variable "private_key_path" {}
 variable "public_key_path" {}
@@ -10,3 +11,5 @@ variable "xc_api_url" {}
 variable "juice_shop_swagger" {}
 variable "juice_shop_fqdn" {}
 variable "arcadia_fqdn" {}
+variable "aws_secret_access_key" {}
+variable "aws_access_key_id" {}
